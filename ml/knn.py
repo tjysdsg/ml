@@ -5,8 +5,9 @@ from typing import Literal
 
 
 class KNN(Estimator):
-    def __init__(self, k: int, distance=EuclideanSq(), reduce: Literal['vote', 'mean'] = 'vote'):
-        super().__init__()
+    def __init__(self, k: int, distance=EuclideanSq(), reduce: Literal['vote', 'mean'] = 'vote', *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        assert k > 0
         self.k = k
         self.distance = distance
         self.x = None
@@ -21,6 +22,8 @@ class KNN(Estimator):
         return np.apply_along_axis(func1d=self.predict_one, axis=1, arr=x)
 
     def predict_one(self, x: np.ndarray):
+        assert self.x is not None and self.y is not None
+
         distances = self.distance(self.x, x)
         idx = np.argsort(distances)[:self.k]
 
